@@ -1,0 +1,139 @@
+---
+title: "Investigating snapshot of dataset collected from the household census conducted in England in 2021 "
+
+format:
+  html:
+    code-fold: true
+    code-link: true
+    embed-resources: true
+    toc: true
+    number-sections: true
+---
+
+```{r}
+#| label: loading packages
+#| include: false
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+```
+
+```{r}
+#| label: load packages
+#| include: false
+data <- read_csv("data.csv")
+# remove NA values
+ data <- na.omit(data)
+```
+
+# Introduction
+
+We will tend to explore relationships from the household census data from England in 2021 to reveal a lot of interesting information. We will use charts and analyses to discover new things about age, marital status, income distribution, ethnic diversity, and education in the dataset. This can help identify interesting stories that are most represented in the dataset snapshot collected during a household census conducted in England in 2021. Detailed information about the census can be found on [The Office for National Statistics (ONS)](https://www.ons.gov.uk/search?topics=9731,6646,3845,9497,4262,4128,7755,4994,6885,9724,7367&filter=datasets)
+
+# The Data
+
+The data in the dataset was a snapshot collected from the household census conducted in England in 2021. Each observation in the dataset includes Household identification number, Individual ID number for persons in the household, Age, Marital Status, Income, Accomodation Ethnicity and Education. A binary variable `Age`, `Mar_Stat`, `INC`, `Female`, `H8`, `Eth`, and `Highest Ed` will analyzed in this report.
+
+## Data Summary
+
+In this investigation, we explore a modified snapshot of household census data from England in 2021. The dataset includes information on age, marital status, income, gender, ethnicity, and educational attainment. The Data in the dataset based on my investigation and visualizations  provide insights into the relationships and distributions within the dataset, particularly focusing on age, income, marital status, and education. Adjustments can be made based on specific goals or aspects of the data. Trends and relationships in the data may also change over time and my chosen variables for analysis may not capture the full complexity of the phenomena under study.
+
+## Discovery in the Dataset
+
+```{r}
+data <- data |> rename(Education ='Highest Ed')
+# rename Highest Ed to Education
+```
+
+Firstly we will find the relationship between Age and Marital Status.
+
+This chart provides a snapshot of the age composition within each marital status category, offering insights into the demographic structure of the dataset. The visualization helps to identify patterns or differences in age distribution among different marital status groups. For instance, this reveal a small amount of divorced people from age 25 and this significantly increased from age 40 to age 45
+```{r}
+ggplot(data = data, aes(x = Age, fill = Mar_Stat)) +
+  geom_bar(color = "black", position = "stack") +
+  labs(title = "Distribution of Age by Marital Status",
+       x = "Age",
+       y = "Count")
+```
+
+**Fig. 1. Relationship Between the Age and Marital Status**
+
+Looking at the income and education level in Figure 2, This visualization provides an overview of the relationship between income and education within the dataset, allowing for insights into potential correlations or trends between these two variables. It is interesting to know that people with Bachelor degree earn slightly higher than Masters Degree and then Secondary school level.
+
+```{r}
+ggplot(data = data, aes(x = INC, y = Education)) +
+  geom_point(color = "green", size = 3, alpha = 0.7) +
+  labs(title = "Scatter Plot of Income vs. Education",
+       x = "Income (INC)",
+       y = "Education Level")
+```
+
+**Fig 2. I used scatter plot to visually represents the relationship between income and education in the dataset.**
+
+From this visualization we can see clear and concise overview of how individuals are distributed across different marital statuses, providing a snapshot of the marital composition within the dataset.
+
+The plot in **Figure 3** shows the different categories of marital status among the participants in the dataset with the highest number being married people.
+
+```{r}
+ggplot(data, aes(x = Mar_Stat)) + 
+     geom_bar() +
+     theme_minimal() +
+     labs(title = "Marital Status Distribution", x = "Marital Status", y = "Count") +
+     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**Fig 3. Marital Status Distribution**
+
+The plot in **Fig 4** This visualization aids in understanding the age composition within each education level category, revealing patterns or differences in age distribution based on educational attainment. By examining the chart, one can observe how age is distributed across various education levels. Stacked bars help visualize the proportion of individuals within each age group for different education levels. We can observe here a significant lower number of persons wiith Masters degree from Age 25.
+
+```{r}
+ggplot(data = data, aes(x = Age, fill = Education)) +
+  geom_bar(color = "black", position = "stack") +
+  labs(title = "Distribution of Age by Education Level",
+       x = "Age",
+       y = "Count")
+```
+
+**Fig 4. Distribution of Education across different age groups**
+
+The plot in **Fig 5** produces a simple scatter plot that visualizes the relationship between the Marital Status and Income in the dataset, with each point representing a data point. The relationship between the 'Mar_Stat' (Marital Status) and 'INC' (Income) variables in the context of the scatter plot can provide insights into how these two variables might be associated. From the figure plot below the highest earners are people who are married. It is interesting to note from the plot that the widowed and divorced almost have the same level of earners unlike the people who are separated with the lowest level of income.
+
+```{r}
+ggplot(data = data, aes(x = Mar_Stat, y = INC)) +
+  geom_point(color = "blue", size = 3, alpha = 0.7) +
+  labs(title = "Scatter Plot of Marital Status vs. Income",
+       x = "Marital Status",
+       y = "Income (INC)")
+```
+
+**Figure 5. Relationship that exist between Income and Marital Status**
+
+The plot helps visualize the general trend and direction of the relationship between age and income, as well as the variability in the data points around this trend. A very interesting observation about this dataset is that Income continue increase as age increases.
+```{r}
+ggplot(data = data, aes(x = Age, y = INC)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "red") +
+  labs(title = "Scatter Plot of Age vs. Income", x = "Age", y = "Income (INC)")
+```
+
+**Figure 6. Relationship that exist between Age and Income**
+
+# Suggestion For Future Work
+Here are few suggestions for further future work
+
+
+Use statistics tests to back up discoveries. Things like hypothesis or correlation test can make these findings more solid and intersting.
+
+Machine learning tools can help us to build models that predict what might happen based on on our data.  
+
+A lot of  things change over time. Because our data has a time element, with how things changes over time, it will be useful if we check for spotting trends or shifts.
+
+Geting more details for our data from other sources or by asking more questions in surveys can really improve our findings.
+
+We can also Create charts and graphs that people can click or play with. This makes it easier for them to understand and explore our data.
+
+Lastly, we can share our work with others, like colleagues or experts. They might have insights or ideas that can make our work better.
+
+# Conclusion
+In summary, our study doesn't just focus on numbers; it prompts us to think about the real people behind the data in the dataset. We've discovered interesting things, like the energy of young individuals, the money differences tied to marital status, the mix of ethnicities, education situations, and room accessibility. All these details help us get a complete picture of the people we surveyed. As we explore these stories, we understand that each data point represents a unique experience. Our investigation is a step towards understanding the diverse lives within households in England.
+
